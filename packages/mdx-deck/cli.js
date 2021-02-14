@@ -23,9 +23,10 @@ const cli = meow(
 
   ${chalk.gray('Options')}
 
-      -h --host     Dev server host
-      -p --port     Dev server port
-      --no-open     Prevent from opening in default browser
+      -h, --host                Dev server host
+      -p, --port                Dev server port
+      --no-open                 Prevent from opening in default browser
+      --path-prefix=<prefix>    Path prefix
 
 `,
   {
@@ -45,6 +46,9 @@ const cli = meow(
         type: 'boolean',
         alias: 'o',
         default: true,
+      },
+      pathPrefix: {
+        type: 'string',
       },
     },
   }
@@ -76,7 +80,8 @@ const gatsby = async (...args) => {
 
 switch (cmd) {
   case 'build':
-    gatsby('build').then(() => {
+    process.env.__PATH_PREFIX__ = opts.pathPrefix
+    gatsby('build', '--prefix-paths').then(() => {
       const public = path.join(__dirname, 'public')
       const dist = path.join(process.cwd(), 'public')
       if (public === dist) return
